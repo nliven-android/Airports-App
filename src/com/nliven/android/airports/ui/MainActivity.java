@@ -14,6 +14,12 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 
+/**
+ * The initial UI of our App.    
+ * 
+ * @author matthew.woolley
+ *
+ */
 public class MainActivity extends Activity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
