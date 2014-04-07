@@ -28,17 +28,24 @@ public class GetAirports {
 
     private static final String TAG = GetAirports.class.getSimpleName();
     
-    private static final String REQUEST_URL = "http://airports.pidgets.com/v1/airports?state=California&format=json";
+    private static final String REQUEST_URL = 
+            "http://airports.pidgets.com/v1/airports?state=California&format=json";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
     
     /*
-     * GSON-related setup...
+     * GSON setup...
      */
-    private static AirportDeserializer gsonAirportDeserializer = new GetAirports.AirportDeserializer();
-    private static GsonBuilder gsonBuilder = new GsonBuilder().registerTypeAdapter(Airport[].class, gsonAirportDeserializer);
-    private static Gson gson = gsonBuilder.create();
+    private static AirportDeserializer mGsonAirportDeserializer = 
+            new GetAirports.AirportDeserializer();
+    private static GsonBuilder mGsonBuilder = 
+            new GsonBuilder().registerTypeAdapter(Airport[].class, mGsonAirportDeserializer);
+    private static Gson mGson = mGsonBuilder.create();
     
+    /**
+     * Executes the GetAirports request, parses and stores the response
+     * in the local database, then publishes a {@link GetAirportsCompletedEvent}
+     */
     public static void execute() {
 
         /*
@@ -61,22 +68,14 @@ public class GetAirports {
 
             @Override
             public void onSuccess(int statusCode, String content) {
-
-                /*
-                 * 1. Parse the JSON String using GSON.  The custom GSON Deserializer implementation
-                 *    will also create an instance of the Airport entity and save it to the Db. 
-                 * 2. Publish an Otto Event. Any Subscriber (i.e. a View or Activity) 
-                 *    will listen for this event and will update accordingly.
-                 */
+              
                 
                 //1. Clear the Airport Db Table
                 AirportApplication.getAirportDao().deleteAll();
 
                 //2. Parse the JSON String using GSON.  The custom GSON Deserializer implementation
-                //   will also create an instance of the Airport entity and save it to the Db.                 
-                //gsonBuilder.registerTypeAdapter(Airport[].class, gsonAirportDeserializer);
-                //Gson gson = gsonBuilder.create();
-                Airport[] airports = gson.fromJson(content, Airport[].class);
+                //   will also create an instance of the Airport entity and save it to the Db.                                 
+                Airport[] airports = mGson.fromJson(content, Airport[].class);
                 
                 /*
                  * Set to null for immediate garbage collection, b/c we dont return any object from here.

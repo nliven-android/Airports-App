@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
         if (event != null){
             
             if (event.Success){
-                Log.e(TAG, "Yay, the GetAirports REST request successfully completed.  Get the Airports from the CacheDb...");
+                Log.e(TAG, "Yay, the GetAirports REST request successfully completed!  Get the Airports from the CacheDb...");
                 
                 //Use the AirportDao to Query and retrieve ALL Airports
                 List<Airport> airports = AirportApplication.getAirportDao().queryBuilder().list();
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
                 }
                 
             } else {
-                Log.e(TAG, "Uh oh, the GetAirports REST request failed with this status: " + event.Status);                
+                Log.e(TAG, "Oops, the GetAirports REST request failed with this status: " + event.Status);                
             }            
         } else {            
             Log.e(TAG, "Oops, we got a NULL GetAirportsCompletedEvent for some reason...");            

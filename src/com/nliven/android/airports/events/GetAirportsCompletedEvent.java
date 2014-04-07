@@ -9,6 +9,9 @@ package com.nliven.android.airports.events;
  */
 public class GetAirportsCompletedEvent {
 
+    /*
+     * For simplicity, make these PUBLIC properties.
+     */
     public final boolean Success;
     public final int Status;
     
