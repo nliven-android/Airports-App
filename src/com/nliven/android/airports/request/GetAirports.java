@@ -84,7 +84,7 @@ public class GetAirports {
                  * NOTE: We *could* also publish this as a new field in the GetAirportsCompletedEvent below,
                  * but we want the Subscriber (i.e. the MainActivity) to exercise GreenDao's "query" 
                  * functionality, etc.  Plus, the activity should really have its own copy of the 
-                 * Airports and we probably shouldnt pass this instance of the airport list around (i.e.
+                 * Airports and we probably shouldn't pass this instance of the airport list around (i.e.
                  * memory leakage.)
                  */
                 airports = null;
