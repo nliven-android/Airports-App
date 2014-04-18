@@ -11,7 +11,7 @@
     <Button android:id="@+id/btnGetAirports"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/get_airport_button_text" />"
+        android:text="@string/get_airport_button_text" />
     
     <ListView android:id="@+id/lvAirports"
         android:layout_width="fill_parent"
