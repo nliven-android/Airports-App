@@ -3,6 +3,7 @@
 
     <string name="app_name">Airports</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="get_airport_button_text">Get Airports</string>
+    <string name="title_activity_airport_details">AirportDetailsActivity</string>
 
 </resources>
