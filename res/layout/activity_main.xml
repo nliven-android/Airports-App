@@ -8,15 +8,22 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
     
-    <Button android:id="@+id/btnGetAirports"
+    <Button android:id="@+id/btnGetCaliAirports"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/get_airport_button_text" />
+        android:text="@string/button_get_cali_airports" />
     
-    <ListView android:id="@+id/lvAirports"
+    <Button android:id="@+id/btnGetTexasAirports"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnGetAirports">               
+        android:layout_below="@id/btnGetCaliAirports"
+        android:text="@string/button_get_texas_airports" />
+    
+    <ListView android:id="@+id/listAirports"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnGetTexasAirports"
+        tools:listitem="@layout/airport_list_row">               
     </ListView>
     
     <!-- This TextView will be shown if there is no Airport data in the ListView -->

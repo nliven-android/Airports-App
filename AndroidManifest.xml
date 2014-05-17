@@ -22,12 +22,11 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.nliven.android.airports.AirportDetailsActivity"
+            android:name="com.nliven.android.airports.ui.AirportDetailsActivity"
             android:label="@string/title_activity_airport_details" >
         </activity>
     </application>

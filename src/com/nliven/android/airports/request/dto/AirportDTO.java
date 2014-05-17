@@ -8,10 +8,10 @@ import com.google.gson.annotations.SerializedName;
  * convert the JSON String into this AirportDTO object (and visa-versa,
  * if applicable.)  Although the JSON String contains more properties, this DTO
  * allows us to gather only the properties we care about.
- * <br/>
+ * <p>
  * DTOs are simple objects that should not contain any business 
  * logic that would require testing.
- * <br/>
+ * <p>
  * If you want this Object's public property Name to be different than the
  * JSON Key Property, use the {@link SerializedName} annotation, like so:
  * <p>

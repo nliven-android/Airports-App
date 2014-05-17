@@ -128,7 +128,8 @@ public class Airport {
     @Override
     public String toString() {        
         return (this.id + "|" + this.name + "|" + this.city + "|" + this.state + "|" + 
-                this.latitude + "|" + this.longitude + "|" + this.runwayLength + "|" + this.url);
+                this.latitude + "|" + this.longitude + "|" + this.runwayLength + "|" + this.url + "|" + 
+        		this.code + "|" + this.icao);
     }
     // KEEP METHODS END
 

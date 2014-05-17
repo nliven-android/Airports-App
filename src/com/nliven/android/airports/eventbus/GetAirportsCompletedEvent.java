@@ -1,4 +1,4 @@
-package com.nliven.android.airports.events;
+package com.nliven.android.airports.eventbus;
 
 /**
  * Used by the Otto EventBus.  It contains information

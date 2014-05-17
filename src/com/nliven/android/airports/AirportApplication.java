@@ -2,8 +2,9 @@ package com.nliven.android.airports;
 
 import com.nliven.android.airports.biz.dao.AirportDao;
 import com.nliven.android.airports.biz.dao.DaoMaster;
-import com.nliven.android.airports.biz.dao.DaoMaster.DevOpenHelper;
 import com.nliven.android.airports.biz.dao.DaoSession;
+import com.nliven.android.airports.biz.dao.ProdDbOpenHelper;
+import com.nliven.android.airports.biz.svc.AirportSvc;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
@@ -26,6 +27,7 @@ public class AirportApplication extends Application{
     private static Bus mBus;    
     private static AirportDao mAirportDao;
     private static DaoSession mDaoSession;
+    private static AirportSvc mAirportSvc; 
     
     @Override
     public void onCreate() {     
@@ -40,23 +42,21 @@ public class AirportApplication extends Application{
     }
     
     /**
-     * The Otto EventBus instance for Publishing events
+     * Returns the Otto EventBus instance for Publishing events
      * to Subscribers.
-     * @return
-     *  The Otto EventBus instance
      */
     public static Bus getEventBus(){
         return mBus;
     }
     
     /**
-     * Returns a DAO object allowing you to Save/Update/Delete
-     * Airport entities.
-     * @return
+     * Returns the Airport DataSvc.  This has the CRUD and Query
+     * functionality for the Airport model object.
      */
-    public static AirportDao getAirportDao(){
-        return mAirportDao;
+    public static AirportSvc getAirportSvc(){
+    	return mAirportSvc;
     }
+    
     
     /**
      * Returns a DaoSession object.  The session cache is not just a plain 
@@ -64,7 +64,6 @@ public class AirportApplication extends Application{
      * For example, if you load the same entity twice in a query, you will 
      * get a single Java object instead of two when using a session cache.
      * This is particular useful for relations pointing to a common set of entities.
-     * @return
      */
     public static DaoSession getDaoSession(){
         return mDaoSession;
@@ -78,14 +77,18 @@ public class AirportApplication extends Application{
         Log.d(TAG, "initializeDatabase..." + ctx.toString());
         
         //Boilerplate for creating a GreenDao database
-        DevOpenHelper helper = new DaoMaster.DevOpenHelper(ctx, "airport_app.db", null);
+        ProdDbOpenHelper helper = new ProdDbOpenHelper(ctx, "airport_app.db", null);
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);        
+        
         //Initialize DaoSession
         mDaoSession = daoMaster.newSession();
     
         //Setup your individual table DAOs here...
         mAirportDao = mDaoSession.getAirportDao();      
+        
+        //Create your DataSvc's here...
+        mAirportSvc = new AirportSvc(mAirportDao);
         
         //Log.e(TAG, "mAirportDao: " + mAirportDao);
         //Log.e(TAG, "mDaoSession: " + mDaoSession);

@@ -6,7 +6,6 @@ import com.nliven.android.airports.biz.dao.AirportDao;
 import com.nliven.android.airports.biz.dao.AirportDao.Properties;
 import com.nliven.android.airports.biz.model.Airport;
 
-import de.greenrobot.dao.query.QueryBuilder;
 
 /**
  * Contains queries for the Airport table.
@@ -20,21 +19,6 @@ public class AirportSvc extends BaseSvc<AirportDao, Airport>{
         super(d);
     }
 
-    @Override
-    protected QueryBuilder<Airport> getQueryBuilder() {
-        return mDao.queryBuilder();
-    }
-
-    @Override
-    public List<Airport> getAll() {        
-        return getQueryBuilder().list();
-    }
-
-    @Override
-    public Airport getById(long id) {
-        return getQueryBuilder().where(Properties.Id.eq(id)).build().unique();
-    }
-    
     /*
      * Start Custom Queries:
      */
@@ -47,7 +31,7 @@ public class AirportSvc extends BaseSvc<AirportDao, Airport>{
      * @return
      *  List of airports whose full Name contain the provided partial name
      */
-    public List<Airport> getByNameContains(String name){        
-        return getQueryBuilder().where(Properties.Name.like("%" + name + "%")).list();        
+    public List<Airport> getByNameContains(String name){                
+        return mDao.queryBuilder().where(Properties.Name.like("%" + name + "%")).list();
     }    
 }
