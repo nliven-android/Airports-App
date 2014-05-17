@@ -4,20 +4,27 @@ package com.nliven.android.airports.ui;
 import java.util.List;
 
 import com.nliven.android.airports.AirportApplication;
+import com.nliven.android.airports.Constants;
 import com.nliven.android.airports.R;
 import com.nliven.android.airports.biz.model.Airport;
-import com.nliven.android.airports.biz.svc.AirportSvc;
-import com.nliven.android.airports.events.GetAirportsCompletedEvent;
+import com.nliven.android.airports.eventbus.GetAirportsCompletedEvent;
 import com.nliven.android.airports.request.GetAirports;
 import com.squareup.otto.Subscribe;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.ListView;
 
 /**
- * The initial UI of our App i.e. the "Home Page".  When this activity is created,
- * it also will make a web service request to get the data of our choosing.    
+ * The initial UI of our App i.e. the "Home Page".  
  * 
  * @author matthew.woolley
  *
@@ -26,7 +33,8 @@ public class MainActivity extends Activity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     
-    private AirportSvc mAirportSvc;
+    private AirportListAdapter mAirportListAdapter;
+    private ProgressDialog mProgressDialog;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +46,69 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
         /*
-         * Initialize our 'GetAirports' button
+         * Initialize the 'GetAirports' buttons
          */
+        Button btnGetCaliAirports = (Button)findViewById(R.id.btnGetCaliAirports);
+        btnGetCaliAirports.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//Start our REST Request here.  The @Subscribe below will listen
+		        //for the event that the Request has completed, either successfully
+		        //or if there was a failure.	
+				mProgressDialog.show();
+				mAirportListAdapter.clearData();
+		        GetAirports.execute("California");  			        
+			}
+		});   
         
-        
+        Button btnGetTexasAirports = (Button)findViewById(R.id.btnGetTexasAirports);
+        btnGetTexasAirports.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//Start our REST Request here.  The @Subscribe below will listen
+		        //for the event that the Request has completed, either successfully
+		        //or if there was a failure.	
+				mProgressDialog.show();
+				mAirportListAdapter.clearData();
+		        GetAirports.execute("Texas");  			        
+			}
+		});  
         
         /*
-         * Initialize our ListView and ListAdapter
+         * Initialize our ListView and ListAdapter.  Includes the click handling when
+         * clicking on an item in the List.
          */
-        
+        mAirportListAdapter = new AirportListAdapter(null, this);
+        ListView listAirports = (ListView)findViewById(R.id.listAirports);
+        listAirports.setAdapter(mAirportListAdapter);
+        listAirports.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int position,
+					long id) {
+				
+				//Get the Airport
+				Airport ap = (Airport)adapterView.getItemAtPosition(position);
+				
+				//Create an Intent and set its contents to just the CacheDb Id.
+				//We *could* put the entire Airport object here in the Intent and pass it
+				//to the DetailsActivity, but its prob better for the DetailsActivity
+				//to load its own copy of the Airport from the CacheDb.
+				Intent i = new Intent(MainActivity.this, AirportDetailsActivity.class);
+				i.putExtra(Constants.INTENT_EXTRA_AIRPORT_ID, ap.getId());
+				startActivity(i);								
+			}        	
+		});
         
         /*
-         * Initialize our data svc for Airports.
-         * TODO: If this Svc is used elsewhere in the app, might be better to 
-         * make it a singleton in the AirportApplication class...
+         * Initialize ProgressDialog, which is shown during a web request
          */
-        mAirportSvc = new AirportSvc(AirportApplication.getAirportDao());
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle("Loading");
+        mProgressDialog.setMessage("Wait while loading...");
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         
     }
 
@@ -64,14 +119,6 @@ public class MainActivity extends Activity {
         //Register our EventBus so it'll be ready to Subscribe to events
         AirportApplication.getEventBus().register(this);
         
-        //Start our REST Request here.  The @Subscribe below will listen
-        //for the event that the Request has completed, either successfully
-        //or if there was a failure.
-        //**NOTE**
-        //In reality, we probably want to be smarter about when to make this call 
-        //(i.e. user-initiated by pressing a 'Get Airports' Button.
-        GetAirports.execute();        
-        
     }       
     
     @Override
@@ -80,6 +127,10 @@ public class MainActivity extends Activity {
         
         //Unregister our EventBus
         AirportApplication.getEventBus().unregister(this);
+        
+        //Hide the "Loading..." dialog
+        if (mProgressDialog.isShowing())
+        	mProgressDialog.cancel();
         
     }
     
@@ -90,12 +141,20 @@ public class MainActivity extends Activity {
      */
     @Subscribe public void onGetAirportsCompleted(GetAirportsCompletedEvent event){
         
+    	//Hide the "Loading..." dialog
+    	mProgressDialog.cancel();
+    	
         if (event != null){            
             if (event.Success){
-                Log.e(TAG, "Yay, the GetAirports REST request successfully completed!  Get the Airports from the CacheDb...");
+                Log.i(TAG, "Yay, the GetAirports REST request successfully completed!  Get the Airports from the CacheDb...");
                 
                 //Use the AirportSvc to Query and retrieve ALL Airports
-                List<Airport> airports = mAirportSvc.getAll();
+                List<Airport> airports = AirportApplication.getAirportSvc().getAll();
+                
+                //Update the ListView and it's ListAdapter with this data.  
+                mAirportListAdapter.setData(airports);
+                
+                //Print to a log
                 if (airports != null){
                     for (Airport a : airports){
                         Log.d(TAG, a.toString());

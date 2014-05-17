@@ -2,14 +2,18 @@ package com.nliven.android.airports.biz.svc;
 
 import java.util.List;
 
-import de.greenrobot.dao.query.QueryBuilder;
+import com.nliven.android.airports.biz.dao.AirportDao.Properties;
 
+import de.greenrobot.dao.AbstractDao;
 
 /**
- * Puts a 'query' layer on top of GreenDao-Orm.  (Though, it would be nice if we could
- * do all this in GreenDao's auto-generated DAO classes.  For now, the DAO class will still 
- * take care of the CRUD commands, but doesn't allow us to add custom queries in its generated code.  
- * This is why we need this SVC layer.)
+ * Creates a DataSvc layer on top of GreenDao-related DAOs.  This is helpful
+ * for those who are familiar with the Data Service pattern that was used
+ * on the various nliven ASP.NET MVC websites.  
+ * 
+ * The idea is that a child DataSvc will be implemented from this parent class
+ * for each Domain/Model object.  From there, the child DataSvc can implement its
+ * own custom queries.  
  * 
  * @author matthew.woolley
  *
@@ -21,20 +25,40 @@ import de.greenrobot.dao.query.QueryBuilder;
 public abstract class BaseSvc<DAO, T> {
 
     protected DAO mDao;
-    
+        
     public BaseSvc(){
         
     }
     
-    public BaseSvc(DAO d){
-        mDao = d;
+    public BaseSvc(DAO d) {
+    	mDao = d;
+    }
+
+    //TODO: Others??    
+        
+	@SuppressWarnings("unchecked")
+	public void insert(T item){
+        ((AbstractDao<T, Long>)mDao).insert(item);
+    } 
+ 
+    @SuppressWarnings("unchecked")
+	public void deleteAll(){
+    	((AbstractDao<T, Long>)mDao).deleteAll();
     }
     
-    protected abstract QueryBuilder<T> getQueryBuilder(); 
-    public abstract List<T> getAll();
-    public abstract T getById(long id);
+    @SuppressWarnings("unchecked")
+	public List<T> getAll(){
+    	return ((AbstractDao<T, Long>)mDao).queryBuilder().list();
+    }
     
-    //TODO: Others??
+    @SuppressWarnings("unchecked")
+	public T getById(long id){
+    	return ((AbstractDao<T, Long>)mDao).queryBuilder().where(Properties.Id.eq(id)).build().unique();
+    }
     
+    @SuppressWarnings("unchecked")
+	public void update(T item){
+        ((AbstractDao<T, Long>)mDao).update(item);
+    }
     
 }
