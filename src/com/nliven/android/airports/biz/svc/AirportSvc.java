@@ -6,9 +6,11 @@ import com.nliven.android.airports.biz.dao.AirportDao;
 import com.nliven.android.airports.biz.dao.AirportDao.Properties;
 import com.nliven.android.airports.biz.model.Airport;
 
+import de.greenrobot.dao.Property;
+
 
 /**
- * Contains queries for the Airport table.
+ * Contains custom queries for the Airport table.
  * 
  * @author matthew.woolley
  *
@@ -19,6 +21,11 @@ public class AirportSvc extends BaseSvc<AirportDao, Airport>{
         super(d);
     }
 
+    @Override
+    public Property getIdProperty() {        
+        return Properties.Id;
+    }   
+    
     /*
      * Start Custom Queries:
      */
@@ -33,5 +40,6 @@ public class AirportSvc extends BaseSvc<AirportDao, Airport>{
      */
     public List<Airport> getByNameContains(String name){                
         return mDao.queryBuilder().where(Properties.Name.like("%" + name + "%")).list();
-    }    
+    }
+   
 }

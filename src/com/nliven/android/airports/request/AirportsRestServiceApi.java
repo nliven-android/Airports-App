@@ -17,7 +17,7 @@ import retrofit.http.Query;
  * @author mwoolley59
  *
  */
-public interface AirportsRestApi {
+public interface AirportsRestServiceApi {
 
 	/**
 	 * Calls the Server API to return a list of Airports within the provided State.

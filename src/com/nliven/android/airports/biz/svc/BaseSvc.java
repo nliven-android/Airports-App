@@ -2,9 +2,8 @@ package com.nliven.android.airports.biz.svc;
 
 import java.util.List;
 
-import com.nliven.android.airports.biz.dao.AirportDao.Properties;
-
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.Property;
 
 /**
  * Creates a DataSvc layer on top of GreenDao-related DAOs.  This is helpful
@@ -18,11 +17,11 @@ import de.greenrobot.dao.AbstractDao;
  * @author matthew.woolley
  *
  * @param <DAO>
- *  The GreenDao-Orm auto-generated DAO class
+ *  The GreenDao auto-generated DAO class
  * @param <T>
- *  The GreenDao-Orm auto-generated Entity class
+ *  The GreenDao auto-generated Entity class
  */
-public abstract class BaseSvc<DAO, T> {
+public abstract class BaseSvc<DAO, T> implements IDataSvc<T> {
 
     protected DAO mDao;
         
@@ -33,8 +32,8 @@ public abstract class BaseSvc<DAO, T> {
     public BaseSvc(DAO d) {
     	mDao = d;
     }
-
-    //TODO: Others??    
+        
+    abstract public Property getIdProperty();
         
 	@SuppressWarnings("unchecked")
 	public void insert(T item){
@@ -52,13 +51,32 @@ public abstract class BaseSvc<DAO, T> {
     }
     
     @SuppressWarnings("unchecked")
-	public T getById(long id){
-    	return ((AbstractDao<T, Long>)mDao).queryBuilder().where(Properties.Id.eq(id)).build().unique();
+	public void update(T item){
+        ((AbstractDao<T, Long>)mDao).update(item);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void delete(T item) {
+        ((AbstractDao<T, Long>)mDao).delete(item);        
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void deleteById(long id) {
+        ((AbstractDao<T, Long>)mDao).deleteByKey(id);        
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public long count() {        
+        return ((AbstractDao<T, Long>)mDao).count();
     }
     
     @SuppressWarnings("unchecked")
-	public void update(T item){
-        ((AbstractDao<T, Long>)mDao).update(item);
+    @Override
+    public T getById(long id) {     
+        return ((AbstractDao<T, Long>)mDao).queryBuilder().where(getIdProperty().eq(id)).build().unique();
     }
     
 }
