@@ -16,7 +16,7 @@ import com.nliven.android.airports.eventbus.GetAirportsCompletedEvent;
 import com.nliven.android.airports.request.dto.AirportDTO;
 
 /**
- *  Uses the "Retrofit" library to make a REST request:<br/> 
+ *  Uses the "Retrofit" library to make a REST request<br/> 
  *  
  *  http://square.github.io/retrofit/
  *  <p>
@@ -30,7 +30,7 @@ public class GetAirports {
 
     private static final String TAG = GetAirports.class.getSimpleName();
     
-    private static AirportsRestApi airportsRequestClient;
+    private static AirportsRestServiceApi airportsRequestClient;
     
     /**
      * Performs the GetAirports request for the given State
@@ -39,7 +39,7 @@ public class GetAirports {
     	
     	if (airportsRequestClient == null){
 
-    		Log.d(TAG, "Initializing RestAdapter and RESTful API Client...");
+    		Log.d(TAG, "Initializing Retrofit RestAdapter and RESTfull API Client...");
     		
     		//Initialize the RestAdapter  
     		RestAdapter restAdapter = new RestAdapter.Builder()
@@ -48,7 +48,7 @@ public class GetAirports {
     		
     		//Create the Request Client, which will be called below with different
     		//URL Path or Query parameters
-    		airportsRequestClient = restAdapter.create(AirportsRestApi.class);
+    		airportsRequestClient = restAdapter.create(AirportsRestServiceApi.class);
 
     	}
 
@@ -63,7 +63,7 @@ public class GetAirports {
 
     		@Override
     		public void success(final List<AirportDTO> data, Response response) {			
-    			Log.i(TAG, "Retrofit worked!");
+    			Log.i(TAG, "Retrofit Request success!");
     			
     			//1. Clear the Airport Db Table
                 AirportApplication.getAirportSvc().deleteAll();
@@ -86,8 +86,7 @@ public class GetAirports {
                             ap.setState(airport.State);
                             ap.setLatitude(airport.Latitude);
                             ap.setLongitude(airport.Longitude);
-                            ap.setRunwayLength(airport.RunwayLength);
-                            ap.setIcao(airport.Icao);
+                            ap.setRunwayLength(airport.RunwayLength);                            
                             ap.setUrl(airport.Url);
 
                             //Save the Airport entity to the database
@@ -105,7 +104,7 @@ public class GetAirports {
 
     		@Override
     		public void failure(RetrofitError error) {			
-    			Log.e(TAG, "Retrofit failed!");
+    			Log.e(TAG, "Retrofit Request failure!");
 
     			// Publish an Otto Event. Any Subscriber will listen for this
                 // Event and will update accordingly.  Notice we set the success boolean 
