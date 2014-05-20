@@ -9,7 +9,7 @@ import com.nliven.android.airports.biz.model.Airport;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
+import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -21,6 +21,8 @@ import android.widget.TextView;
  */
 public class AirportDetailsActivity extends Activity {
 
+    private static final String TAG = AirportDetailsActivity.class.getSimpleName();
+    
 	private TextView txtName;
 	private TextView txtCity;
 	private TextView txtCode;
@@ -37,37 +39,40 @@ public class AirportDetailsActivity extends Activity {
          */
         setContentView(R.layout.activity_airport_details);
         
-        //Find and set the TextViews
+        /*
+         * Find and set the TextViews
+         */
         txtName = (TextView)findViewById(R.id.txtName);
         txtCity = (TextView)findViewById(R.id.txtCity);
         txtCode = (TextView)findViewById(R.id.txtCode);
         txtIcao = (TextView)findViewById(R.id.txtIcao);
         
-        //Receive the Intent from the initiating MainActivity
+        /*
+         * Receive the Intent from the initiating MainActivity
+         */
         Intent i = getIntent();
         
-        //Then get the 'Extra' that we originally put into this Intent in MainActivity,
-        //which was the Airport's CacheDb Id
+        /*
+         * Then get the 'Extra' that we originally put into this Intent in MainActivity,         
+         * which is the Airport's CacheDb Id.
+         */
         long airportId = i.getLongExtra(Constants.INTENT_EXTRA_AIRPORT_ID, 0);
+        Log.d(TAG, "The Airport CacheDb ID from the Intent is: " + airportId);
         
-        //Use the Airport DataSvc to load the Airport using this ID
+        /*
+         * Use the Airport DataSvc to load the Airport using this ID
+         */
         if (airportId > 0)
         	 mAirport = AirportApplication.getAirportSvc().getById(airportId);
         
-        //Set the various TextViews with Airport data
+        /*
+         * Set the various TextViews with Airport data
+         */
         if (mAirport != null){
         	txtName.setText(mAirport.getName());
         	txtCity.setText(mAirport.getCity());
         	txtCode.setText(mAirport.getCode());
         	txtIcao.setText(mAirport.getIcao());
         }
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.airport_details, menu);
-        return true;
-    }
-
+    }   
 }
