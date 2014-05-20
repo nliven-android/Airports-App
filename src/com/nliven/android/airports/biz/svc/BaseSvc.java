@@ -19,7 +19,7 @@ import de.greenrobot.dao.Property;
  * @param <DAO>
  *  The GreenDao auto-generated DAO class
  * @param <T>
- *  The GreenDao auto-generated Entity class
+ *  The GreenDao auto-generated Entity (Model) class
  */
 public abstract class BaseSvc<DAO, T> implements IDataSvc<T> {
 
