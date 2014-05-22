@@ -10,8 +10,8 @@ import de.greenrobot.dao.Property;
  * for those who are familiar with the Data Service pattern that was used
  * on the various nliven ASP.NET MVC websites.  
  * 
- * The idea is that a child DataSvc will be implemented from this parent class
- * for each Domain/Model object.  From there, the child DataSvc can implement its
+ * The idea is that a child Svc will implement this parent class
+ * for each Domain/Model object.  At that point, the child DataSvc can implement its
  * own custom queries.  
  * 
  * @author matthew.woolley
@@ -21,7 +21,7 @@ import de.greenrobot.dao.Property;
  * @param <T>
  *  The GreenDao auto-generated Entity (Model) class
  */
-public abstract class BaseSvc<DAO, T> implements IDataSvc<T> {
+public abstract class BaseSvc<DAO extends AbstractDao<T, Long>, T> implements IDataSvc<T> {
 
     protected DAO mDao;
         
@@ -33,48 +33,36 @@ public abstract class BaseSvc<DAO, T> implements IDataSvc<T> {
     	mDao = d;
     }
         
-    abstract public Property getIdProperty();
-        
-	@SuppressWarnings("unchecked")
+    abstract public Property getIdProperty();       
+	
 	public void insert(T item){
         ((AbstractDao<T, Long>)mDao).insert(item);
     } 
  
-    @SuppressWarnings("unchecked")
 	public void deleteAll(){
     	((AbstractDao<T, Long>)mDao).deleteAll();
     }
     
-    @SuppressWarnings("unchecked")
 	public List<T> getAll(){
     	return ((AbstractDao<T, Long>)mDao).queryBuilder().list();
     }
-    
-    @SuppressWarnings("unchecked")
+        
 	public void update(T item){
         ((AbstractDao<T, Long>)mDao).update(item);
     }
-
-    @SuppressWarnings("unchecked")
-    @Override
+    
     public void delete(T item) {
         ((AbstractDao<T, Long>)mDao).delete(item);        
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
     public void deleteById(long id) {
         ((AbstractDao<T, Long>)mDao).deleteByKey(id);        
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
     public long count() {        
         return ((AbstractDao<T, Long>)mDao).count();
     }
     
-    @SuppressWarnings("unchecked")
-    @Override
     public T getById(long id) {     
         return ((AbstractDao<T, Long>)mDao).queryBuilder().where(getIdProperty().eq(id)).build().unique();
     }

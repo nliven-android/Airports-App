@@ -80,19 +80,19 @@ public class GetAirportsByState {
 
                     @Override
                     public void run() {
-                        for(AirportDTO airport : data){
+                        for(AirportDTO dto : data){
 
                             //Create an instance of the Airport Entity
                             Airport ap = new Airport();
-                            ap.setCode(airport.Code);
-                            ap.setIcao(airport.Icao);
-                            ap.setName(airport.Name);
-                            ap.setCity(airport.City);
-                            ap.setState(airport.State);
-                            ap.setLatitude(airport.Latitude);
-                            ap.setLongitude(airport.Longitude);
-                            ap.setRunwayLength(airport.RunwayLength);                            
-                            ap.setUrl(airport.Url);
+                            ap.setCode(dto.Code);
+                            ap.setIcao(dto.Icao);
+                            ap.setName(dto.Name);
+                            ap.setCity(dto.City);
+                            ap.setState(dto.State);
+                            ap.setLatitude(dto.Latitude);
+                            ap.setLongitude(dto.Longitude);
+                            ap.setRunwayLength(dto.RunwayLength);                            
+                            ap.setUrl(dto.Url);
 
                             //Save the Airport entity to the database
                             AirportApplication.getAirportSvc().insert(ap);
