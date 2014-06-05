@@ -33,7 +33,7 @@ public abstract class BaseSvc<DAO extends AbstractDao<T, Long>, T> implements ID
     	mDao = d;
     }
         
-    abstract public Property getIdProperty();       
+    abstract protected Property getIdProperty();       
 	
 	public void insert(T item){
         ((AbstractDao<T, Long>)mDao).insert(item);

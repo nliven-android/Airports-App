@@ -16,8 +16,10 @@ import android.widget.TextView;
 /**
  * Simple example of how to set up a List's Adapter.  Read more about how the 
  * "ViewHolder" pattern works for ListViews, and why you should use it here:
- * 
- * http://lucasr.org/2012/04/05/performance-tips-for-androids-listview/
+ * <p>
+ * <a href="http://lucasr.org/2012/04/05/performance-tips-for-androids-listview">
+ *  http://lucasr.org/2012/04/05/performance-tips-for-androids-listview
+ * </a>
  * 
  * @author mwoolley59
  *
@@ -38,7 +40,7 @@ public class AirportListAdapter extends BaseAdapter{
 		
 		//At least to initialize to an empty list, otherwise will get 
 		//"Null Pointer Exceptions"
-		mData = (airports == null) ? new ArrayList<Airport>() : airports ;
+		mData = (airports == null) ? new ArrayList<Airport>() : airports;
 		
 		//Initialize the LayoutInflator here
 		mLayoutInflator = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -65,17 +67,24 @@ public class AirportListAdapter extends BaseAdapter{
 	 * 	List of Airports
 	 */
 	public void setData(List<Airport> airports){
-		clearData();
-		mData = airports;
+		
+	    // Dont want to do the notifyDataSetChanged 2x i.e. once in 'clearData' and once here
+	    clearData(false); 
+		
+		// Be sure to handle if the airports parameter here is 'null'
+		mData = (airports == null) ? new ArrayList<Airport>() : airports;
+		
+		// Triggers the refresh of the List
 		notifyDataSetChanged();
 	}
 	
 	/**
 	 * Clears all data from the list
 	 */
-	public void clearData(){
+	public void clearData(boolean triggerNotifyDataSetChange){
 		mData.clear();
-		notifyDataSetChanged();
+		if (triggerNotifyDataSetChange)
+		    notifyDataSetChanged();
 	}
 
 	@Override

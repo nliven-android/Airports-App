@@ -22,7 +22,7 @@ public class AirportSvc extends BaseSvc<AirportDao, Airport>{
     }
 
     @Override
-    public Property getIdProperty() {        
+    protected Property getIdProperty() {        
         return Properties.Id;
     }   
     

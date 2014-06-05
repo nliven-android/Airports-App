@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="libs/retrofit-1.5.1.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="libs/okhttp-1.6.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

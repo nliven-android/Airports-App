@@ -1,7 +1,6 @@
 
 package com.nliven.android.airports.request;
 
-
 import java.util.List;
 
 import retrofit.Callback;
@@ -14,6 +13,7 @@ import com.nliven.android.airports.AirportApplication;
 import com.nliven.android.airports.biz.model.Airport;
 import com.nliven.android.airports.eventbus.GetAirportsCompletedEvent;
 import com.nliven.android.airports.request.dto.AirportDTO;
+import com.squareup.otto.Bus;
 
 /**
  *  Uses the "Retrofit" library to make a REST request:
@@ -26,35 +26,30 @@ import com.nliven.android.airports.request.dto.AirportDTO;
  * 
  * @author matthew.woolley
  */
-public class GetAirportsByState {
+public class GetAirportsByStateRequest {
 
-    private static final String TAG = GetAirportsByState.class.getSimpleName();
+    private static final String TAG = GetAirportsByStateRequest.class.getSimpleName();
     
-    private static AirportsWebServiceApi airportsRequestClient;
+    private AirportsWebServiceApi mAirportsRequestClient;    
+    private RestAdapter mRestAdapter;
+    private Bus mBus;
+    
+    public GetAirportsByStateRequest(RestAdapter adapter, Bus bus){
+        mRestAdapter = adapter;
+        mBus = bus;
+        
+        // Create the Request Client
+        Log.d(TAG, "Initializing Retrofit RestAdapter and RESTfull API Client...");
+        mAirportsRequestClient = mRestAdapter.create(AirportsWebServiceApi.class);
+    }
     
     /**
      * Performs the GetAirports request for the given State
      */
-    public static void execute(String state){
+    public void execute(String state) throws RetrofitError {
     	
-    	if (airportsRequestClient == null){
-
-    		Log.d(TAG, "Initializing Retrofit RestAdapter and RESTfull API Client...");
-    		
-    		//Initialize the RestAdapter
-    		//TODO: Might want to move this to Application and make a singleton, as we
-    		//      could use this for other Requests i.e. getting an Airport by its CODE string
-    		RestAdapter restAdapter = new RestAdapter.Builder()
-    			.setEndpoint("http://airports.pidgets.com")
-    			.build();
-    		
-    		//Create the Request Client, which will be called below with different
-    		//URL Path or Query parameters
-    		//TODO: Move this to a Base class or Application class and make a Singleton(??)
-    		airportsRequestClient = restAdapter.create(AirportsWebServiceApi.class);
-
-    	}
-
+        Log.d(TAG, "execute request...");
+        
     	/*
     	 * Performs the REST Request. 
     	 * 
@@ -64,7 +59,7 @@ public class GetAirportsByState {
     	 * 
     	 * TODO: 'State' should be URL-encoded i.e. handle spaces for places like 'New York', etc
     	 */
-    	airportsRequestClient.getAirportsByState(state, new Callback<List<AirportDTO>>() {
+        mAirportsRequestClient.getAirportsByState(state, new Callback<List<AirportDTO>>() {
 
     		@Override
     		public void success(final List<AirportDTO> data, Response response) {			
@@ -103,18 +98,19 @@ public class GetAirportsByState {
 
                 //3. Publish an Otto Event. Any Subscriber (i.e. a View or Activity) 
                 //   will listen for this event and will update accordingly.
-                AirportApplication.getEventBus().post(new GetAirportsCompletedEvent(true, response.getStatus()));
+                mBus.post(new GetAirportsCompletedEvent(true, response.getStatus()));
     			
     		}
 
     		@Override
     		public void failure(RetrofitError error) {			
-    			Log.e(TAG, "Retrofit Request failure!");
+    			Log.e(TAG, "Retrofit Request failure: " + error.getMessage());
+    			//error.printStackTrace();
 
     			// Publish an Otto Event. Any Subscriber will listen for this
                 // Event and will update accordingly.  Notice we set the success boolean 
                 // to 'false' since this request was a FAILURE.
-                AirportApplication.getEventBus().post(new GetAirportsCompletedEvent(false, error.getResponse().getStatus()));
+                mBus.post(new GetAirportsCompletedEvent(false, error.getResponse().getStatus()));
     			
     		}
     	}); 		

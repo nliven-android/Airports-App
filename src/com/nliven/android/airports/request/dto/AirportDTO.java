@@ -27,6 +27,12 @@ import com.google.gson.annotations.SerializedName;
  */
 public class AirportDTO {
     
+    /*
+     * For simplicity, make all these PUBLIC properties, rather than
+     * having getters/setters, since this really is a simple 'Bean'-like
+     * object.
+     */    
+    
     @SerializedName("code") //yep, Gson parsing is CASE-SENSITIVE!!
     public String Code;
     
