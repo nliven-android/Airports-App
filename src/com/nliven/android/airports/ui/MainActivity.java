@@ -8,7 +8,7 @@ import com.nliven.android.airports.Constants;
 import com.nliven.android.airports.R;
 import com.nliven.android.airports.biz.model.Airport;
 import com.nliven.android.airports.eventbus.GetAirportsCompletedEvent;
-import com.nliven.android.airports.request.GetAirportsByState;
+import com.nliven.android.airports.request.GetAirportsByStateRequest;
 import com.squareup.otto.Subscribe;
 
 import android.os.Bundle;
@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
         
         /*
          * Initialize our ListView and ListAdapter.  Includes the click handling when
-         * clicking on an item in the List.
+         * clicking on an item in the List
          */
         mAirportListAdapter = new AirportListAdapter(null, this);
         ListView listAirports = (ListView)findViewById(R.id.listAirports);
@@ -85,16 +85,11 @@ public class MainActivity extends Activity {
              * Show the "Loading..." Progress dialog
              */
             mProgressDialog.show();
-            
-            /*
-             * Completely clear the current ListView
-             */
-            mAirportListAdapter.clearData();
-            
+                        
             /*
              * Start our REST Request here.  The @Subscribe below will listen
              * for the event that the Request has completed, either successfully
-             * or if there was a failure.
+             * or if there was a failure
              */
             String state = null;
             switch(v.getId()){
@@ -107,7 +102,13 @@ public class MainActivity extends Activity {
                 default:
                     break;                    
             }
-            GetAirportsByState.execute(state); //Starts the processing for making the web request            
+            
+            /*
+             * Create REST Request object and execute the request
+             */
+            GetAirportsByStateRequest request = 
+                    new GetAirportsByStateRequest(AirportApplication.getAirportApiRestAdapter(), AirportApplication.getEventBus());
+            request.execute(state);             
         }
     };
     
@@ -133,7 +134,6 @@ public class MainActivity extends Activity {
         }
     };
     
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -161,7 +161,8 @@ public class MainActivity extends Activity {
      * or if there was a failure.
      * @param event
      */
-    @Subscribe public void onGetAirportsCompleted(GetAirportsCompletedEvent event){
+    @Subscribe 
+    public void onGetAirportsCompleted(GetAirportsCompletedEvent event){
         
     	//Hide the "Loading..." dialog
     	mProgressDialog.cancel();

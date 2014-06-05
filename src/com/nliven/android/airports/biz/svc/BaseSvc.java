@@ -14,6 +14,9 @@ import de.greenrobot.dao.Property;
  * for each Domain/Model object.  At that point, the child DataSvc can implement its
  * own custom queries.  
  * 
+ * TODO: I really don't like how this class is somewhat coupled w/ GreenDao's classes (AbstractDao)
+ * 		 Should we really be passing in an implementation of the IDataSvc somehow here??
+ * 
  * @author matthew.woolley
  *
  * @param <DAO>
@@ -33,7 +36,7 @@ public abstract class BaseSvc<DAO extends AbstractDao<T, Long>, T> implements ID
     	mDao = d;
     }
         
-    abstract public Property getIdProperty();       
+    abstract protected Property getIdProperty();       
 	
 	public void insert(T item){
         ((AbstractDao<T, Long>)mDao).insert(item);

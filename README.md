@@ -24,14 +24,4 @@ It uses a couple of popular open-source libraries:
 NOTE: 
 This is intended to run with the "AirportsDaoGenerator" project, so be sure to import both these projects locally.
 
-===========
-Change Log
-===========
-April 4 2014
- - Initial Checkin
-
-May 17 2014 
- - Replaced async-http-client library with Retrofit. 
- - Added ListView UI and DetailsView UI.
- - Added DataSvc pattern.  AirportSvc is first to implement this pattern.
   
